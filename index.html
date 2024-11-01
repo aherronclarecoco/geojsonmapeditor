@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSON Station Editor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea, input[type="file"], input[type="color"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="color"] {
+            height: 50px;
+            padding: 0;
+        }
+        textarea::placeholder {
+            color: #999;
+            opacity: 0.7;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .instructions {
+            background: #e7f3e7;
+            border-left: 6px solid #4CAF50;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .instructions p {
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        #errorTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #errorTable th, #errorTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #errorTable th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        .collapsible {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .active, .collapsible:hover {
+            background-color: #45a049;
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .content ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .content li {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GeoJSON Station Editor</h1>
+        
+        <div class="instructions">
+            <p><strong>Step 1:</strong> Upload your GeoJSON file.</p>
+            <p><strong>Step 2:</strong> Enter the station names (one per line) and the properties you want to update.</p>
+            <p><strong>Step 3:</strong> Click "Update GeoJSON" to download the updated file.</p>
+            <p><strong>Step 4:</strong> Open the updated file in <a href="https://geojson.io/" target="_blank">geojson.io</a> to view and edit your map.</p>
+        </div>
+        
+        <form id="stationForm">
+            <label for="geojsonFile">Upload GeoJSON File:</label>
+            <input type="file" id="geojsonFile" name="geojsonFile" accept=".geojson,application/json"><br><br>
+            
+            <label for="stationNames">Station Names (one per line):</label><br>
+            <textarea id="stationNames" name="stationNames" rows="10" cols="30" placeholder="Enter station names here..."></textarea><br><br>
+            
+            <label for="markerColor">Marker Color:</label>
+            <input type="color" id="markerColor" name="markerColor" value="#ff0000"><br><br>
+            
+            <label for="markerSize">Marker Size:</label>
+            <input type="text" id="markerSize" name="markerSize" placeholder="medium"><br><br>
+            
+            <label for="markerSymbol">Marker Symbol:</label>
+            <input type="text" id="markerSymbol" name="markerSymbol" placeholder="circle"><br><br>
+            
+            <button type="button" onclick="updateGeoJSON()">Update GeoJSON</button>
+            <button onclick="hideUneditedPins()">Hide Unedited Pins</button>
+        </form>
+
+        <div id="suggestions" style="display:none;">
+            <p>If the suggested matches are all correct, click this button to update them in the text box:</p>
+            <button type="button" onclick="updateTextBox()">Update Text Box</button>
+        </div>
+
+        <table id="errorTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Unrecognized Name</th>
+                    <th>Suggested Match</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button type="button" class="collapsible">View All Station Names</button>
+        <div class="content">
+            <input type="text" id="searchStation" onkeyup="searchStation()" placeholder="Search for station names..">
+            <ul id="stationList">
+                <!-- Station names will be dynamically added here -->
+            </ul>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
