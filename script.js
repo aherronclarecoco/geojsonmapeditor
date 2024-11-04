@@ -20,7 +20,45 @@ document.addEventListener('DOMContentLoaded', () => {
         li.textContent = name;
         stationList.appendChild(li);
     });
+
+    document.getElementById('checkButton').addEventListener('click', (event) => {
+        event.preventDefault();
+        checkStationNames();
+    });
+
+    document.getElementById('updateButton').addEventListener('click', (event) => {
+        event.preventDefault();
+        updateGeoJSON();
+    });
+
+    document.getElementById('hideButton').addEventListener('click', (event) => {
+        event.preventDefault();
+        hideUneditedPins();
+    });
+
+    document.getElementById('exportCSVButton').addEventListener('click', (event) => {
+        event.preventDefault();
+        exportToCSV();
+    });
+
+    document.getElementById('stationNames').addEventListener('input', () => {
+  
+    document.getElementById('checkButton').style.display = 'block';
+    document.getElementById('actionButtons').style.display = 'none';
+    });
 });
+
+function checkStationNames() {
+    const stationNames = document.getElementById('stationNames').value.split('\n').map(name => name.trim().toUpperCase());
+    const unmatchedNames = stationNames.filter(name => !allStationNames.includes(name));
+
+    if (unmatchedNames.length > 0) {
+        displayUnmatchedNames(unmatchedNames);
+    } else {
+        document.getElementById('checkButton').style.display = 'none';
+        document.getElementById('actionButtons').style.display = 'block';
+    }
+}
 
 function updateGeoJSON() {
     const fileInput = document.getElementById('geojsonFile');
@@ -29,18 +67,12 @@ function updateGeoJSON() {
     const markerSize = document.getElementById('markerSize').value || 'medium';
     const markerSymbol = document.getElementById('markerSymbol').value || 'circle';
 
-    if (fileInput.files.length === 0) {
-        alert('Please upload a GeoJSON file.');
-        return;
-    }
-
-    const file = fileInput.files[0];
+    const file = fileInput.files.length > 0 ? fileInput.files[0] : 'irish_fire_stations.geojson';
     const reader = new FileReader();
 
     reader.onload = function(event) {
         try {
             const geojsonData = JSON.parse(event.target.result);
-            const unmatchedNames = [];
 
             geojsonData.features.forEach(feature => {
                 if (feature.properties && feature.properties.Name) {
@@ -54,19 +86,25 @@ function updateGeoJSON() {
                 }
             });
 
-            if (stationNames.length > 0) {
-                displayUnmatchedNames(stationNames);
-            } else {
-                const updatedGeoJSON = JSON.stringify(geojsonData, null, 2);
-                downloadFile(updatedGeoJSON, 'updated_stations.geojson');
-            }
+            const updatedGeoJSON = JSON.stringify(geojsonData, null, 2);
+            downloadFile(updatedGeoJSON, 'updated_stations.geojson');
         } catch (error) {
             console.error('Error parsing GeoJSON file:', error);
             alert('There was an error processing the GeoJSON file.');
         }
     };
 
-    reader.readAsText(file);
+    if (fileInput.files.length > 0) {
+        reader.readAsText(file);
+    } else {
+        fetch(file)
+            .then(response => response.text())
+            .then(text => reader.onload({ target: { result: text } }))
+            .catch(error => {
+                console.error('Error fetching default GeoJSON file:', error);
+                alert('There was an error fetching the default GeoJSON file.');
+            });
+    }
 }
 
 function hideUneditedPins() {
@@ -76,18 +114,12 @@ function hideUneditedPins() {
     const markerSize = document.getElementById('markerSize').value || 'medium';
     const markerSymbol = document.getElementById('markerSymbol').value || 'circle';
 
-    if (fileInput.files.length === 0) {
-        alert('Please upload a GeoJSON file.');
-        return;
-    }
-
-    const file = fileInput.files[0];
+    const file = fileInput.files.length > 0 ? fileInput.files[0] : 'irish_fire_stations.geojson';
     const reader = new FileReader();
 
     reader.onload = function(event) {
         try {
             const geojsonData = JSON.parse(event.target.result);
-            const unmatchedNames = [];
 
             geojsonData.features = geojsonData.features.filter(feature => {
                 if (feature.properties && feature.properties.Name) {
@@ -98,27 +130,32 @@ function hideUneditedPins() {
                         feature.properties['marker-symbol'] = markerSymbol;
                         stationNames.splice(nameIndex, 1); // Remove matched name
                         return true;
-                    } else {
-                        unmatchedNames.push(feature.properties.Name);
                     }
                 }
                 return false;
             });
 
-            if (unmatchedNames.length > 0) {
-                displayUnmatchedNames(unmatchedNames);
-            } else {
-                const updatedGeoJSON = JSON.stringify(geojsonData, null, 2);
-                downloadFile(updatedGeoJSON, 'filtered_stations.geojson');
-            }
+            const updatedGeoJSON = JSON.stringify(geojsonData, null, 2);
+            downloadFile(updatedGeoJSON, 'filtered_stations.geojson');
         } catch (error) {
             console.error('Error parsing GeoJSON file:', error);
             alert('There was an error processing the GeoJSON file.');
         }
     };
 
-    reader.readAsText(file);
+    if (fileInput.files.length > 0) {
+        reader.readAsText(file);
+    } else {
+        fetch(file)
+            .then(response => response.text())
+            .then(text => reader.onload({ target: { result: text } }))
+            .catch(error => {
+                console.error('Error fetching default GeoJSON file:', error);
+                alert('There was an error fetching the default GeoJSON file.');
+            });
+    }
 }
+
 
 function downloadFile(content, fileName) {
     const a = document.createElement('a');
@@ -225,6 +262,61 @@ function updateTextBox() {
     document.getElementById('stationNames').value = stationNames.join('\n');
     document.getElementById('suggestions').style.display = 'none';
     table.style.display = 'none';
+}
+
+function exportToCSV() {
+    const fileInput = document.getElementById('geojsonFile');
+    const file = fileInput.files.length > 0 ? fileInput.files[0] : 'irish_fire_stations.geojson';
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        try {
+            const geojsonData = JSON.parse(event.target.result);
+            const csvRows = [['Name', 'Coordinates']];
+
+            geojsonData.features.forEach(feature => {
+                if (feature.properties && feature.properties.Name && feature.geometry && feature.geometry.coordinates) {
+                    // Check if the feature has been edited (i.e., has marker properties)
+                    if (feature.properties['marker-color'] || feature.properties['marker-size'] || feature.properties['marker-symbol']) {
+                        const name = feature.properties.Name;
+                        const coordinates = feature.geometry.coordinates.join(',');
+                        csvRows.push([name, coordinates]);
+                    }
+                }
+            });
+
+            if (csvRows.length > 1) {
+                const csvContent = csvRows.map(e => e.join(',')).join('\n');
+                downloadFile(csvContent, 'stations.csv', 'text/csv');
+            } else {
+                alert('No edited pins found to export.');
+            }
+        } catch (error) {
+            console.error('Error parsing GeoJSON file:', error);
+            alert('There was an error processing the GeoJSON file.');
+        }
+    };
+
+    if (fileInput.files.length > 0) {
+        reader.readAsText(file);
+    } else {
+        fetch(file)
+            .then(response => response.text())
+            .then(text => reader.onload({ target: { result: text } }))
+            .catch(error => {
+                console.error('Error fetching default GeoJSON file:', error);
+                alert('There was an error fetching the default GeoJSON file.');
+            });
+    }
+}
+
+function downloadFile(content, fileName, mimeType) {
+    const a = document.createElement('a');
+    const file = new Blob([content], { type: mimeType });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
 }
 
 function searchStation() {
