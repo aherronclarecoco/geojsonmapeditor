@@ -11,17 +11,25 @@
             color: #333;
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding-top: 60px; /* Adjust this value if needed */
         }
         h1 {
             color: #4CAF50;
             text-align: center;
+            margin-bottom: 20px;
         }
-        form {
+        .container {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 800px;
+            width: 100%;
             margin: 20px auto;
         }
         label {
@@ -29,7 +37,7 @@
             margin-bottom: 8px;
             font-weight: bold;
         }
-        input[type="text"], textarea, input[type="file"], input[type="color"] {
+        input[type="text"], textarea, input[type="file"], input[type="color"], select {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -53,6 +61,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #45a049;
@@ -66,10 +75,6 @@
         }
         .instructions p {
             margin: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
         }
         #errorTable {
             width: 100%;
@@ -95,6 +100,7 @@
             outline: none;
             font-size: 16px;
             margin-top: 20px;
+            border-radius: 4px;
         }
         .active, .collapsible:hover {
             background-color: #45a049;
@@ -121,34 +127,273 @@
 <body>
     <div class="container">
         <h1>GeoJSON Station Editor</h1>
-        
         <div class="instructions">
-            <p><strong>Step 1:</strong> Upload your GeoJSON file.</p>
+            <p><strong>Step 1:</strong> Upload your GeoJSON file. If you don't upload a file, the default file containing all the fire stations in Ireland will be used.</p>
             <p><strong>Step 2:</strong> Enter the station names (one per line) and the properties you want to update.</p>
-            <p><strong>Step 3:</strong> Click "Update GeoJSON" to download the updated file.</p>
-            <p><strong>Step 4:</strong> Open the updated file in <a href="https://geojson.io/" target="_blank">geojson.io</a> to view and edit your map.</p>
+            <p><strong>Step 3:</strong> Click "Check Station Names" to verify the names.</p>
+            <p><strong>Step 4:</strong> If all names are correct, choose to update the GeoJSON or hide unedited pins.</p>
         </div>
-        
+
         <form id="stationForm">
             <label for="geojsonFile">Upload GeoJSON File:</label>
             <input type="file" id="geojsonFile" name="geojsonFile" accept=".geojson,application/json"><br><br>
-            
+
             <label for="stationNames">Station Names (one per line):</label><br>
             <textarea id="stationNames" name="stationNames" rows="10" cols="30" placeholder="Enter station names here..."></textarea><br><br>
-            
+
             <label for="markerColor">Marker Color:</label>
             <input type="color" id="markerColor" name="markerColor" value="#ff0000"><br><br>
-            
-            <label for="markerSize">Marker Size:</label>
-            <input type="text" id="markerSize" name="markerSize" placeholder="medium"><br><br>
-            
-            <label for="markerSymbol">Marker Symbol:</label>
-            <input type="text" id="markerSymbol" name="markerSymbol" placeholder="circle"><br><br>
-            
-            <button type="button" onclick="updateGeoJSON()">Update GeoJSON</button>
-            <button onclick="hideUneditedPins()">Hide Unedited Pins</button>
-        </form>
 
+            <label for="markerSymbol">Marker Symbol:</label>
+            <input list="marker-symbol" id="markerSymbol" name="markerSymbol">
+            <datalist id="marker-symbol">
+                <option value="aerialway"></option>
+                <option value="airfield"></option>
+                <option value="airport"></option>
+                <option value="alcohol-shop"></option>
+                <option value="american-football"></option>
+                <option value="amusement-park"></option>
+                <option value="animal-shelter"></option>
+                <option value="aquarium"></option>
+                <option value="arrow"></option>
+                <option value="art-gallery"></option>
+                <option value="attraction"></option>
+                <option value="bakery"></option>
+                <option value="bank-JP"></option>
+                <option value="bank"></option>
+                <option value="bar"></option>
+                <option value="barrier"></option>
+                <option value="baseball"></option>
+                <option value="basketball"></option>
+                <option value="bbq"></option>
+                <option value="beach"></option>
+                <option value="beer"></option>
+                <option value="bicycle-share"></option>
+                <option value="bicycle"></option>
+                <option value="blood-bank"></option>
+                <option value="bowling-alley"></option>
+                <option value="bridge"></option>
+                <option value="building-alt1"></option>
+                <option value="building"></option>
+                <option value="bus"></option>
+                <option value="cafe"></option>
+                <option value="campsite"></option>
+                <option value="car-rental"></option>
+                <option value="car-repair"></option>
+                <option value="car"></option>
+                <option value="casino"></option>
+                <option value="castle-JP"></option>
+                <option value="castle"></option>
+                <option value="caution"></option>
+                <option value="cemetery-JP"></option>
+                <option value="cemetery"></option>
+                <option value="charging-station"></option>
+                <option value="cinema"></option>
+                <option value="circle-stroked"></option>
+                <option value="circle"></option>
+                <option value="city"></option>
+                <option value="clothing-store"></option>
+                <option value="college-JP"></option>
+                <option value="college"></option>
+                <option value="commercial"></option>
+                <option value="communications-tower"></option>
+                <option value="confectionery"></option>
+                <option value="construction"></option>
+                <option value="convenience"></option>
+                <option value="cricket"></option>
+                <option value="cross"></option>
+                <option value="dam"></option>
+                <option value="danger"></option>
+                <option value="defibrillator"></option>
+                <option value="dentist"></option>
+                <option value="diamond"></option>
+                <option value="doctor"></option>
+                <option value="dog-park"></option>
+                <option value="drinking-water"></option>
+                <option value="elevator"></option>
+                <option value="embassy"></option>
+                <option value="emergency-phone"></option>
+                <option value="entrance-alt1"></option>
+                <option value="entrance"></option>
+                <option value="farm"></option>
+                <option value="fast-food"></option>
+                <option value="fence"></option>
+                <option value="ferry-JP"></option>
+                <option value="ferry"></option>
+                <option value="fire-station-JP"></option>
+                <option value="fire-station"></option>
+                <option value="fitness-centre"></option>
+                <option value="florist"></option>
+                <option value="fuel"></option>
+                <option value="furniture"></option>
+                <option value="gaming"></option>
+                <option value="garden-centre"></option>
+                <option value="garden"></option>
+                <option value="gate"></option>
+                <option value="gift"></option>
+                <option value="globe"></option>
+                <option value="golf"></option>
+                <option value="grocery"></option>
+                <option value="hairdresser"></option>
+                <option value="harbor"></option>
+                <option value="hardware"></option>
+                <option value="heart"></option>
+                <option value="heliport"></option>
+                <option value="highway-rest-area"></option>
+                <option value="historic"></option>
+                <option value="home"></option>
+                <option value="horse-riding"></option>
+                <option value="hospital-JP"></option>
+                <option value="hospital"></option>
+                <option value="hot-spring"></option>
+                <option value="ice-cream"></option>
+                <option value="industry"></option>
+                <option value="information"></option>
+                <option value="jewelry-store"></option>
+                <option value="karaoke"></option>
+                <option value="landmark-JP"></option>
+                <option value="landmark"></option>
+                <option value="landuse"></option>
+                <option value="laundry"></option>
+                <option value="library"></option>
+                <option value="lift-gate"></option>
+                <option value="lighthouse-JP"></option>
+                <option value="lighthouse"></option>
+                <option value="lodging"></option>
+                <option value="logging"></option>
+                <option value="marker-stroked"></option>
+                <option value="marker"></option>
+                <option value="mobile-phone"></option>
+                <option value="monument-JP"></option>
+                <option value="monument"></option>
+                <option value="mountain"></option>
+                <option value="museum"></option>
+                <option value="music"></option>
+                <option value="natural"></option>
+                <option value="observation-tower"></option>
+                <option value="optician"></option>
+                <option value="paint"></option>
+                <option value="park-alt1"></option>
+                <option value="park"></option>
+                <option value="parking-garage"></option>
+                <option value="parking-paid"></option>
+                <option value="parking"></option>
+                <option value="pharmacy"></option>
+                <option value="picnic-site"></option>
+                <option value="pitch"></option>
+                <option value="place-of-worship"></option>
+                <option value="playground"></option>
+                <option value="police-JP"></option>
+                <option value="police"></option>
+                <option value="post-JP"></option>
+                <option value="post"></option>
+                <option value="prison"></option>
+                <option value="racetrack-boat"></option>
+                <option value="racetrack-cycling"></option>
+                <option value="racetrack-horse"></option>
+                <option value="racetrack"></option>
+                <option value="rail-light"></option>
+                <option value="rail-metro"></option>
+                <option value="rail"></option>
+                <option value="ranger-station"></option>
+                <option value="recycling"></option>
+                <option value="religious-buddhist"></option>
+                <option value="religious-christian"></option>
+                <option value="religious-jewish"></option>
+                <option value="religious-muslim"></option>
+                <option value="religious-shinto"></option>
+                <option value="residential-community"></option>
+                <option value="restaurant-bbq"></option>
+                <option value="restaurant-noodle"></option>
+                <option value="restaurant-pizza"></option>
+                <option value="restaurant-seafood"></option>
+                <option value="restaurant-sushi"></option>
+                <option value="restaurant"></option>
+                <option value="road-accident"></option>
+                <option value="roadblock"></option>
+                <option value="rocket"></option>
+                <option value="school-JP"></option>
+                <option value="school"></option>
+                <option value="scooter"></option>
+                <option value="shelter"></option>
+                <option value="shoe"></option>
+                <option value="shop"></option>
+                <option value="skateboard"></option>
+                <option value="skiing"></option>
+                <option value="slaughterhouse"></option>
+                <option value="slipway"></option>
+                <option value="snowmobile"></option>
+                <option value="soccer"></option>
+                <option value="square-stroked"></option>
+                <option value="square"></option>
+                <option value="stadium"></option>
+                <option value="star-stroked"></option>
+                <option value="star"></option>
+                <option value="suitcase"></option>
+                <option value="swimming"></option>
+                <option value="table-tennis"></option>
+                <option value="teahouse"></option>
+                <option value="telephone"></option>
+                <option value="tennis"></option>
+                <option value="theatre"></option>
+                <option value="toilet"></option>
+                <option value="toll"></option>
+                <option value="town-hall"></option>
+                <option value="town"></option>
+                <option value="triangle-stroked"></option>
+                <option value="triangle"></option>
+                <option value="tunnel"></option>
+                <option value="veterinary"></option>
+                <option value="viewpoint"></option>
+                <option value="village"></option>
+                <option value="volcano"></option>
+                <option value="volleyball"></option>
+                <option value="warehouse"></option>
+                <option value="waste-basket"></option>
+                <option value="watch"></option>
+                <option value="water"></option>
+                <option value="waterfall"></option>
+                <option value="watermill"></option>
+                <option value="wetland"></option>
+                <option value="wheelchair"></option>
+                <option value="windmill"></option>
+                <option value="zoo"></option>
+                    </datalist>
+
+                    <!-- Marker Size Dropdown -->
+                    <label for="markerSize">Marker Size:</label>
+                    <select id="markerSize" name="markerSize">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    </select>            
+            <br>
+            
+            <button id="checkButton" type="button">Check Station Names</button>
+            <div id="actionButtons" style="display: none;">
+                <button id="updateButton" type="button">Update GeoJSON</button>
+                <button id="hideButton" type="button">Hide Unedited Pins</button>
+                <button id="exportCSVButton" type="button">Export to CSV for Smappen</button>
+            </div>
+        </form>
+        <div class="instructions">
+            <details>
+                <summary>Using geojson.io</summary>
+                <p>geojson.io is a tool for creating, editing, and visualizing GeoJSON files. Follow these steps:</p>
+                <ol>
+                    <li>Go to <a href="https://geojson.io" target="_blank">geojson.io</a>.</li>
+                    <li>Upload the GeoJSON file you generated.</li>
+                </ol>
+            </details>
+            <details>
+                <summary>Using smappen</summary>
+                <p>smappen is a tool for creating custom maps and exporting them as GeoJSON files. Follow these steps:</p>
+                <ol>
+                    <li>Go to <a href="https://smappen.com/app" target="_blank">smappen.com/app</a>.</li>
+                    <li>Upload the CSV you generated, select co-ordinates and you can calculate the travel times from there.</li>
+                </ol>
+            </details>
+        </div>
         <div id="suggestions" style="display:none;">
             <p>If the suggested matches are all correct, click this button to update them in the text box:</p>
             <button type="button" onclick="updateTextBox()">Update Text Box</button>
