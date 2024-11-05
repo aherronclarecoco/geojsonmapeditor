@@ -78,6 +78,7 @@ function updateGeoJSON() {
                 if (feature.properties && feature.properties.Name) {
                     const nameIndex = stationNames.indexOf(feature.properties.Name.toUpperCase());
                     if (nameIndex !== -1) {
+                        // Set marker properties to indicate the feature has been edited
                         feature.properties['marker-color'] = markerColor;
                         feature.properties['marker-size'] = markerSize;
                         feature.properties['marker-symbol'] = markerSymbol;
@@ -107,6 +108,9 @@ function updateGeoJSON() {
     }
 }
 
+
+let filteredGeoJSON = {}; // Variable to hold the filtered GeoJSON data
+
 function hideUneditedPins() {
     const fileInput = document.getElementById('geojsonFile');
     const stationNames = document.getElementById('stationNames').value.split('\n').map(name => name.trim().toUpperCase());
@@ -120,22 +124,28 @@ function hideUneditedPins() {
     reader.onload = function(event) {
         try {
             const geojsonData = JSON.parse(event.target.result);
-
-            geojsonData.features = geojsonData.features.filter(feature => {
+            const filteredFeatures = geojsonData.features.filter(feature => {
                 if (feature.properties && feature.properties.Name) {
                     const nameIndex = stationNames.indexOf(feature.properties.Name.toUpperCase());
                     if (nameIndex !== -1) {
+                        // Set marker properties to indicate the feature has been edited
                         feature.properties['marker-color'] = markerColor;
                         feature.properties['marker-size'] = markerSize;
                         feature.properties['marker-symbol'] = markerSymbol;
+
                         stationNames.splice(nameIndex, 1); // Remove matched name
-                        return true;
+                        return true; // Keep this feature
                     }
                 }
-                return false;
+                return false; // Remove this feature
             });
 
-            const updatedGeoJSON = JSON.stringify(geojsonData, null, 2);
+            filteredGeoJSON = {
+                type: "FeatureCollection",
+                features: filteredFeatures
+            };
+
+            const updatedGeoJSON = JSON.stringify(filteredGeoJSON, null, 2);
             downloadFile(updatedGeoJSON, 'filtered_stations.geojson');
         } catch (error) {
             console.error('Error parsing GeoJSON file:', error);
@@ -155,7 +165,6 @@ function hideUneditedPins() {
             });
     }
 }
-
 
 function downloadFile(content, fileName) {
     const a = document.createElement('a');
@@ -264,33 +273,67 @@ function updateTextBox() {
     table.style.display = 'none';
 }
 
+
+
+
+function downloadFile(content, fileName, mimeType) {
+    const a = document.createElement('a');
+    const file = new Blob([content], { type: mimeType });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
 function exportToCSV() {
     const fileInput = document.getElementById('geojsonFile');
+    const stationNames = document.getElementById('stationNames').value.split('\n').map(name => name.trim().toUpperCase());
+    const markerColor = document.getElementById('markerColor').value || '#ff0000';
+    const markerSize = document.getElementById('markerSize').value || 'medium';
+    const markerSymbol = document.getElementById('markerSymbol').value || 'circle';
+
     const file = fileInput.files.length > 0 ? fileInput.files[0] : 'irish_fire_stations.geojson';
     const reader = new FileReader();
 
     reader.onload = function(event) {
         try {
             const geojsonData = JSON.parse(event.target.result);
-            const csvRows = [['Name', 'Coordinates']];
+            const filteredFeatures = geojsonData.features.filter(feature => {
+                if (feature.properties && feature.properties.Name) {
+                    const nameIndex = stationNames.indexOf(feature.properties.Name.toUpperCase());
+                    if (nameIndex !== -1) {
+                        // Set marker properties to indicate the feature has been edited
+                        feature.properties['marker-color'] = markerColor;
+                        feature.properties['marker-size'] = markerSize;
+                        feature.properties['marker-symbol'] = markerSymbol;
 
-            geojsonData.features.forEach(feature => {
-                if (feature.properties && feature.properties.Name && feature.geometry && feature.geometry.coordinates) {
-                    // Check if the feature has been edited (i.e., has marker properties)
-                    if (feature.properties['marker-color'] || feature.properties['marker-size'] || feature.properties['marker-symbol']) {
-                        const name = feature.properties.Name;
-                        const coordinates = feature.geometry.coordinates.join(',');
-                        csvRows.push([name, coordinates]);
+                        stationNames.splice(nameIndex, 1); // Remove matched name
+                        return true; // Keep this feature
                     }
                 }
+                return false; // Remove this feature
             });
 
-            if (csvRows.length > 1) {
-                const csvContent = csvRows.map(e => e.join(',')).join('\n');
-                downloadFile(csvContent, 'stations.csv', 'text/csv');
-            } else {
-                alert('No edited pins found to export.');
+            if (filteredFeatures.length === 0) {
+                alert('No edited stations to export.');
+                return;
             }
+
+            const csvContent = 'data:text/csv;charset=utf-8,'
+                + 'Station Name,Coordinates\n'
+                + filteredFeatures.map(feature => {
+                    const name = feature.properties.Name;
+                    const coordinates = feature.geometry.coordinates;
+                    return `${name},"${coordinates[0]}, ${coordinates[1]}"`;
+                }).join('\n');
+
+            const encodedUri = encodeURI(csvContent);
+            const a = document.createElement('a');
+            a.setAttribute('href', encodedUri);
+            a.setAttribute('download', 'edited_stations.csv');
+            document.body.appendChild(a); // Required for Firefox
+            a.click();
+            document.body.removeChild(a); // Clean up
         } catch (error) {
             console.error('Error parsing GeoJSON file:', error);
             alert('There was an error processing the GeoJSON file.');
@@ -310,14 +353,13 @@ function exportToCSV() {
     }
 }
 
-function downloadFile(content, fileName, mimeType) {
-    const a = document.createElement('a');
-    const file = new Blob([content], { type: mimeType });
-    a.href = URL.createObjectURL(file);
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(a.href);
-}
+// Add event listener for the export button
+document.getElementById('exportCSVButton').addEventListener('click', (event) => {
+    event.preventDefault();
+    exportToCSV();
+});
+
+
 
 function searchStation() {
     const input = document.getElementById('searchStation');
