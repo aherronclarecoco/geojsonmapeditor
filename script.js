@@ -324,7 +324,7 @@ function exportToCSV() {
                 + filteredFeatures.map(feature => {
                     const name = feature.properties.Name;
                     const coordinates = feature.geometry.coordinates;
-                    return `${name},"${coordinates[0]}, ${coordinates[1]}"`;
+                    return `${name},"${coordinates[1]}, ${coordinates[0]}"`;
                 }).join('\n');
 
             const encodedUri = encodeURI(csvContent);
