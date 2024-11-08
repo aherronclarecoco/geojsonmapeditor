@@ -1,1 +1,68 @@
-...
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelTime Isochrone API</title>
+    <link rel="stylesheet" href="style.css"> <!-- Reference to the external CSS file -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+    <header>
+        <h1>TravelTime Isochrone API</h1>
+    </header>
+    <main>
+        <nav>
+            <div class="left">
+                <a href="index.html">GeoJSON Station Editor</a>
+            </div>
+            <div class="right">
+                <a href="traveltime.html">Travel Time Calculator</a>
+            </div>
+        </nav>
+        <form id="isochroneForm">
+
+            <label for="locations">Enter Coordinates (latitude, longitude):</label>
+            <textarea id="locations" rows="10" placeholder="53.521288, -7.348414&#10;..."></textarea>
+
+            <label for="arrival_time">Select Arrival Time:</label>
+            <input type="datetime-local" id="arrival_time" value="2024-11-07T09:00:00">
+
+            <label for="travel_time">Total Travel Time (in hours):</label>
+            <input type="number" id="travel_time" value="1" step="0.1">
+
+            <label for="travel_mode">Select Mode of Travel:</label>
+            <select id="travel_mode">
+                <option value="driving">Driving</option>
+                <option value="walking">Walking</option>
+                <option value="cycling">Cycling</option>
+            </select>
+
+            <br>
+            <label for="togglePins">Show Pins</label>
+            <input type="checkbox" id="togglePins" checked>
+            <br><br>
+
+            <button type="submit">Get Isochrones</button>
+            <button type="button" id="mergeMaps">Merge Maps</button>
+            <button type="button" id="clearMaps">Clear All Maps</button>
+            <button type="button" id="exportGeoJSON">Export GeoJSON</button>
+
+            <div class="opacity-control">
+                <label for="opacity">Set Opacity of Isochrones:</label>
+                <input type="range" id="opacity" min="0" max="1" step="0.1" value="0.5">
+            </div>
+        </form>
+
+        <div id="dropArea">Drag and drop a CSV file here</div>
+        <div id="map"></div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="config.js"></script>
+
+</body>
+
+</html>
