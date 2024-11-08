@@ -1,5 +1,6 @@
 # GIS Map Editor
-
+# 🚨If this application ever stops working, update the API Key and App ID in config.js🚨
+ You can get both of these at https://account.traveltime.com/dashboard
 ## Overview
 This project provides tools for editing GeoJSON files and visualizing data on a map. It includes features for managing station data, verifying names, and exporting updated information.
 
