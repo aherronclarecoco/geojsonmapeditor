@@ -4,129 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoJSON Station Editor</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            padding-top: 60px; /* Adjust this value if needed */
-        }
-        h1 {
-            color: #4CAF50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
-            margin: 20px auto;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="text"], textarea, input[type="file"], input[type="color"], select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input[type="color"] {
-            height: 50px;
-            padding: 0;
-        }
-        textarea::placeholder {
-            color: #999;
-            opacity: 0.7;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .instructions {
-            background: #e7f3e7;
-            border-left: 6px solid #4CAF50;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .instructions p {
-            margin: 0;
-        }
-        #errorTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        #errorTable th, #errorTable td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        #errorTable th {
-            background-color: #f2f2f2;
-            text-align: left;
-        }
-        .collapsible {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            padding: 10px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 16px;
-            margin-top: 20px;
-            border-radius: 4px;
-        }
-        .active, .collapsible:hover {
-            background-color: #45a049;
-        }
-        .content {
-            padding: 0 18px;
-            display: none;
-            overflow: hidden;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .content ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .content li {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css"> <!-- Reference to the external CSS file -->
+
+    
 </head>
 <body>
+<header>
+    <h1>GeoJSON Station Editor</h1>
+</header>
     <div class="container">
-        <h1>GeoJSON Station Editor</h1>
+        <nav>
+            <div class="left">
+                <a href="index.html">GeoJSON Station Editor</a>
+            </div>
+            <div class="right">
+                <a href="traveltime.html">Travel Time Calculator</a>
+            </div>
+        </nav>
         <div class="instructions">
             <p><strong>Step 1:</strong> Upload your GeoJSON file. If you don't upload a file, the default file containing all the fire stations in Ireland will be used.</p>
             <p><strong>Step 2:</strong> Enter the station names (one per line) and the properties you want to update.</p>
