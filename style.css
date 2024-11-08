@@ -1,0 +1,233 @@
+* {
+  box-sizing: border-box; /* Ensures padding and borders are included in the element's total width and height */
+  margin: 0; /* Resets default margins */
+  padding: 0; /* Resets default padding */
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Consistent font */
+  background-color: #f4f4f4; /* Unified background color */
+  color: #333; /* Text color */
+  display: flex;
+  flex-direction: column; /* Stacks elements vertically */
+  align-items: center; /* Centers content horizontally */
+  min-height: 100vh; /* Ensures full height */
+  padding: 20px; /* General padding */
+}
+
+header {
+  background-color: #007bff; /* Consistent header color */
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  width: 100%; /* Ensures it takes the full width */
+}
+
+main {
+  flex-grow: 1; /* Allows main to take up remaining space */
+  padding: 20px;
+  width: 100%; /* Ensures it takes full width */
+  max-width: 1000px; /* Optional: limits the width for better readability */
+}
+
+h1, h2 {
+  background-color: #007bff; /* Consistent header color */
+  color: #ffffff; /* Consistent header color */
+  text-align: center;
+}
+
+section {
+  margin-bottom: 2rem; /* Space between sections */
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px; /* Consistent margin */
+  font-weight: bold; /* Bold labels */
+}
+
+input[type="text"],
+input[type="file"],
+input[type="color"],
+input[type="datetime-local"],
+input[type="number"],
+select,
+textarea {
+  width: calc(100% - 20px); /* Adjusts width to account for padding */
+  padding: 10px; /* Consistent padding */
+  margin-bottom: 20px; /* Space below inputs */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 4px; /* Rounded corners */
+}
+
+input[type="color"] {
+  height: 50px; /* Height for color input */
+  padding: 0; /* No padding */
+}
+
+textarea::placeholder {
+  color: #999; /* Placeholder color */
+  opacity: 0.7; /* Placeholder opacity */
+}
+
+button {
+  background-color: #007bff; /* Button color */
+  color: white;
+  border: none;
+  padding: 12px 20px; /* Consistent button padding */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.instructions {
+  background: #e7f3e7; /* Instruction background */
+  border-left: 6px solid #4CAF50; /* Left border */
+  padding: 12px; /* Padding */
+  margin-bottom: 20px; /* Space below */
+  border-radius: 4px; /* Rounded corners */
+}
+
+#map {
+  height: 500px; /* Height for map */
+  width: 100%; /* Full width */
+  margin-top: 20px; /* Space above */
+}
+
+table {
+  width: 100%; /* Full width */
+  border-collapse: collapse; /* Collapse borders */
+  margin-top: 20px; /* Space above */
+}
+
+table, th, td {
+  border: 1px solid #ccc; /* Table borders */
+}
+
+th, td {
+  padding: 0.75rem; /* Cell padding */
+  text-align: left; /* Left align text */
+}
+
+#dropArea {
+  border: 2px dashed #007bff; /* Drop area styling */
+  padding: 20px; /* Padding */
+  text-align: center; /* Center text */
+  margin-top: 20px; /* Space above */
+}
+
+.collapsible {
+  background-color: #4CAF50; /* Collapsible button color */
+  color: white;
+  cursor: pointer; /* Pointer cursor */
+  padding: 10px; /* Padding */
+  width: 100%; /* Full width */
+  border: none; /* No border */
+  text-align: left; /* Left align text */
+  outline: none; /* No outline */
+  font-size: 16px; /* Font size */
+  margin-top: 20px; /* Space above */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.active, .collapsible:hover {
+  background-color: #45a049; /* Darker shade on hover */
+}
+
+.content {
+  padding: 0 18px; /* Padding */
+  display: none; /* Hidden by default */
+  overflow: hidden; /* Hide overflow */
+  background-color: #f9f9f9; /* Background color */
+  border: 1px solid #ddd; /* Border */
+  border-radius: 4px; /* Rounded corners */
+  margin-top: 10px; /* Space above */
+}
+
+.content ul {
+  list-style-type: none; /* No list style */
+  padding: 0; /* No padding */
+}
+
+.content li {
+  padding: 8px; /* Padding */
+  border-bottom: 1px solid #ddd; /* Bottom border */
+}
+
+nav {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Space links evenly */
+  align-items: center; /* Center items vertically */
+  padding: 0.5rem; /* Padding around the navbar */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+nav .left {
+  background-color: #2990ff; /* Blue background for the left half */
+  padding: 0.5rem; /* Padding for the left half */
+  border-radius: 8px 0 0 8px; /* Rounded corners on the left */
+  flex: 1; /* Take up equal space */
+  display: flex; /* Flexbox for inner links */
+  justify-content: center; /* Center links horizontally */
+}
+
+nav .right {
+  background-color: white; /* White background for the right half */
+  padding: 0.5rem; /* Padding for the right half */
+  border-radius: 0 8px 8px 0; /* Rounded corners on the right */
+  flex: 1; /* Take up equal space */
+  display: flex; /* Flexbox for inner links */
+  justify-content: center; /* Center links horizontally */
+}
+
+nav a {
+  text-decoration: none; /* Remove underline from links */
+  padding: 0.5rem 1rem; /* Padding for links */
+  border-radius: 4px; /* Rounded corners for buttons */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+/* Left button styles */
+nav .left a {
+  color: white; /* White text for left button */
+}
+
+nav .left a:hover {
+  background-color: #ffffff;
+  color: #2990ff;
+}
+
+/* Right button styles */
+nav .right a {
+  color: #2990ff; /* Blue text for right button */
+  background-color: white; /* White background for right button */
+}
+
+nav .right a:hover {
+  background-color: #2990ff; /* Blue background on hover */
+  color: white; /* White text on hover */
+}
+
+/* Optional: Responsive design for smaller screens */
+@media (max-width: 600px) {
+  nav {
+      flex-direction: column; /* Stack links vertically on small screens */
+      align-items: stretch; /* Stretch items to full width */
+  }
+
+  nav .left, nav .right {
+      width: 100%; /* Full width for left and right halves */
+      border-radius: 0; /* Remove rounded corners */
+  }
+
+  nav a {
+      width: 100%; /* Full width links */
+      text-align: center; /* Center text */
+  }
+}
