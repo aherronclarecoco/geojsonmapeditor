@@ -28,7 +28,7 @@ Open index.html or traveltime.html in a web browser, you can navigate between th
 ### GeoJSON Station Editor: 
 Upload a GeoJSON file, enter station names, and click “Check Station Names” to verify. If there are incorrect station names there will be a box at the bottom of the page that suggests near matches. You can click "Update Text Box" and continue
 ### Travel Time Calculator:
-Input coordinates and travel parameters to visualize isochrones. You can use the "Export to CSV" in GeoJSON Station Editor to generate the a file with the coordinates for all stations you name & drop this file into the the csv file upload box to automatically input all the coordinates. Use the buttons & adjustable selectors on the page to create your coverage map once you have input the coordinates.
+Input coordinates and travel parameters to visualize isochrones. You can use the "Export to CSV" in GeoJSON Station Editor to generate a file with the coordinates for all stations you name & drop this file into the the csv file upload box to automatically input all the coordinates. Use the buttons & adjustable selectors on the page to create your coverage map once you have input the coordinates.
 ## Dependencies
 Leaflet.js for mapping.
 TravelTime API for travel data.
