@@ -86,8 +86,8 @@ button:hover {
 }
 
 .instructions {
-  background: #e7f3e7; /* Instruction background */
-  border-left: 6px solid #4CAF50; /* Left border */
+  background:#ABCAFF; /* Instruction background */
+  border-left: 6px solid #7AA7F7; /* Left border */
   padding: 12px; /* Padding */
   margin-bottom: 20px; /* Space below */
   border-radius: 4px; /* Rounded corners */
@@ -122,7 +122,7 @@ th, td {
 }
 
 .collapsible {
-  background-color: #4CAF50; /* Collapsible button color */
+  background-color: #007bff; /* Collapsible button color */
   color: white;
   cursor: pointer; /* Pointer cursor */
   padding: 10px; /* Padding */
@@ -136,7 +136,7 @@ th, td {
 }
 
 .active, .collapsible:hover {
-  background-color: #45a049; /* Darker shade on hover */
+  background-color: #0056b3; /* Darker shade on hover */
 }
 
 .content {
