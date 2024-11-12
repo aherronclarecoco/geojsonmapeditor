@@ -2,7 +2,7 @@ const map = L.map('map').setView([53.521288, -7.348414], 8); // Default view
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '© OpenStreetMap'
+    attribution: 'Â© OpenStreetMap'
 }).addTo(map);
 
 let allGeoJsonFeatures = []; // Store all GeoJSON features for merging
@@ -20,7 +20,7 @@ document.getElementById('isochroneForm').addEventListener('submit', function(eve
     });
 
     const arrivalTime = document.getElementById('arrival_time').value;
-    const travelTime = parseInt(document.getElementById('travel_time').value) * 3600; // Convert hours to seconds
+    const travelTime = parseInt(document.getElementById('travel_time').value) * 60; // Convert minutes to seconds
     const travelMode = document.getElementById('travel_mode').value;
     const opacity = parseFloat(document.getElementById('opacity').value);
 
