@@ -1,12 +1,14 @@
+
 const map = L.map('map').setView([53.521288, -7.348414], 8); // Default view
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: 'Â© OpenStreetMap'
+    attribution: '�� OpenStreetMap'
 }).addTo(map);
 
 let allGeoJsonFeatures = []; // Store all GeoJSON features for merging
 let pinMarkers = []; // Store pin markers
+let pinCount = 0; // Counter for total pins added
 
 document.getElementById('isochroneForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -20,118 +22,151 @@ document.getElementById('isochroneForm').addEventListener('submit', function(eve
     });
 
     const arrivalTime = document.getElementById('arrival_time').value;
-    const travelTime = parseInt(document.getElementById('travel_time').value) * 60; // Convert minutes to seconds
-    const travelMode = document.getElementById('travel_mode').value;
-    const opacity = parseFloat(document.getElementById('opacity').value);
+const travelTime = parseInt(document.getElementById('travel_time').value) * 60; // Convert minutes to seconds
+const travelMode = document.getElementById('travel_mode').value;
+const opacity = parseFloat(document.getElementById('opacity').value);
 
-    const batchSize = 10; // Limit to 10 locations at a time
-    let index = 0;
+const batchSize = 10; // Limit to 10 locations at a time
+let index = 0;
+let attemptedCoordinates = []; // Store attempted coordinates
+let successfulCoordinates = []; // Store successful coordinates
 
-    const processBatch = () => {
-        const batch = locations.slice(index, index + batchSize);
-        if (batch.length === 0) return; // No more locations to process
+const processBatch = () => {
+    const batch = locations.slice(index, index + batchSize);
+    if (batch.length === 0) {
+        // All batches processed, check for failures
+        checkForFailures();
+        return; // No more locations to process
+    }
 
-        const arrivalSearches = batch.map((coords, batchIndex) => ({
-            id: `isochrone-${index + batchIndex}`,
-            coords: coords,
-            arrival_time: arrivalTime,
-            travel_time: travelTime,
-            transportation: {
-                type: travelMode,
-                walking_time: 900, // Default walking time
-                cycling_time_to_station: 100, // Default cycling time
-                parking_time: 0,
-                boarding_time: 0,
-                driving_time_to_station: 1800, // Default driving time
-                pt_change_delay: 0,
-                disable_border_crossing: false
-            },
-            level_of_detail: {
-                scale_type: "simple",
-                level: "medium"
-            },
-            no_holes: false,
-            polygons_filter: {
-                limit: 100
-            },
-            snapping: {
-                penalty: "enabled",
-                accept_roads: "both_drivable_and_walkable"
-            },
-            render_mode: "approximate_time_filter",
-            remove_water_bodies: true,
-            range: {
-                enabled: false,
-                width: 3600
-            }
-        }));
+    attemptedCoordinates.push(...batch); // Add attempted coordinates to the list
 
-        const requestBody = {
-            arrival_searches: arrivalSearches // Ensure this is an array
-        };
+    const arrivalSearches = batch.map((coords, batchIndex) => ({
+        id: `isochrone-${index + batchIndex}`,
+        coords: coords,
+        arrival_time: arrivalTime,
+        travel_time: travelTime,
+        transportation: {
+            type: travelMode,
+            walking_time: 900, // Default walking time
+            cycling_time_to_station: 100, // Default cycling time
+            parking_time: 0,
+            boarding_time: 0,
+            driving_time_to_station: 1800, // Default driving time
+            pt_change_delay: 0,
+            disable_border_crossing: false
+        },
+        level_of_detail: {
+            scale_type: "simple",
+            level: "medium"
+        },
+        no_holes: false,
+        polygons_filter: {
+            limit: 100
+        },
+        snapping: {
+            penalty: "enabled",
+            accept_roads: "both_drivable_and_walkable"
+        },
+        render_mode: "approximate_time_filter",
+        remove_water_bodies: true,
+        range: {
+            enabled: false,
+            width: 3600
+        }
+    }));
 
-        // Now you can access the API key
-        fetch('https://api.traveltimeapp.com/v4/time-map', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Application-Id': config.appId, // Use the App ID from config
-                'X-Api-Key': config.apiKey // Use the API key from config
-            },
-            body: JSON.stringify(requestBody)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Transform the response into a valid GeoJSON format
-                const geoJsonFeatures = {
-                    type: "FeatureCollection",
-                    features: data.results.map(result => ({
-                        type: "Feature",
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: result.shapes.map(shape =>
-                                shape.shell.map(coord => [coord.lng, coord.lat]) // Convert to [lng, lat]
-                            )
-                        },
-                        properties: result.properties
-                    }))
-                };
-
-                // Store features for merging later
-                allGeoJsonFeatures.push(...geoJsonFeatures.features);
-
-                // Add GeoJSON to the map with specified opacity
-                if (geoJsonFeatures.features.length > 0) {
-                    L.geoJSON(geoJsonFeatures, {
-                        style: function(feature) {
-                            return { color: 'blue', weight: 2, fillOpacity: opacity };
-                        }
-                    }).addTo(map);
-                }
-
-                // Add pins for each coordinate if toggle is checked
-                if (document.getElementById('togglePins').checked) {
-                    batch.forEach(coords => {
-                        const marker = L.marker([coords.lat, coords.lng]).addTo(map);
-                        pinMarkers.push(marker);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                index += batchSize; // Move to the next batch
-                processBatch(); // Process the next batch
-            });
+    const requestBody = {
+        arrival_searches: arrivalSearches // This is an array
     };
 
-    processBatch(); // Start processing the first batch
+    fetch('https://api.traveltimeapp.com/v4/time-map', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Application-Id': config.appId,
+            'X-Api-Key': config.apiKey
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const geoJsonFeatures = {
+            type: "FeatureCollection",
+            features: data.results.map(result => ({
+                type: "Feature",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: result.shapes.map(shape =>
+                        shape.shell.map(coord => [coord.lng, coord.lat]) // Convert to [lng, lat]
+                    )
+                },
+                properties: result.properties
+            }))
+        };
+
+        // Store features for merging later
+        allGeoJsonFeatures.push(...geoJsonFeatures.features);
+
+        // Track successful coordinates based on the original input
+        successfulCoordinates.push(...batch.map(coords => `${coords.lat}, ${coords.lng}`));
+
+        // Add GeoJSON to the map with specified opacity
+        if (geoJsonFeatures.features.length > 0) {
+            L.geoJSON(geoJsonFeatures, {
+                style: function(feature) {
+                    return { color: 'blue', weight: 2, fillOpacity: opacity };
+                }
+            }).addTo(map);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        index += batchSize; // Move to the next batch
+        processBatch(); // Process the next batch
+    });
+};
+
+// Function to check for failed coordinates after all batches are processed
+function checkForFailures() {
+    const attemptedCoordsFormatted = attemptedCoordinates.map(coords => `${coords.lat}, ${coords.lng}`);
+    const failedCoordinates = attemptedCoordsFormatted.filter(coords => 
+        !successfulCoordinates.includes(coords) // Check against successful coordinates
+    );
+
+    // Display failed coordinates if any
+    if (failedCoordinates.length > 0) {
+        displayFailedCoordinates(failedCoordinates);
+    } else {
+        // Hide the error message if all coordinates were successful
+        document.getElementById('errorMessage').style.display = "none";
+        document.getElementById('failedCoordinates').style.display = "none";
+    }
+}
+
+// Function to display failed coordinates
+function displayFailedCoordinates(failedCoords) {
+    const failedList = document.getElementById('failedList');
+    failedList.innerHTML = ''; // Clear previous entries
+    failedCoords.forEach(coords => {
+        const listItem = document.createElement('li');
+        listItem.textContent = coords; // Display in the format "lat, lng"
+        failedList.appendChild(listItem);
+    });
+    document.getElementById('errorMessage').textContent = "Some coordinates failed to generate coverage.";
+    document.getElementById('errorMessage').style.display = "block";
+    document.getElementById('failedCoordinates').style.display = "block";
+}
+
+// Start processing the first batch
+processBatch();
 });
 
 document.getElementById('mergeMaps').addEventListener('click', function() {
@@ -233,3 +268,4 @@ dropArea.addEventListener('drop', (event) => {
         alert('Please drop a valid CSV file.');
     }
 });
+    
