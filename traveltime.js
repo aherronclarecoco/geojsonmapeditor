@@ -1,4 +1,3 @@
-
 const map = L.map('map').setView([53.521288, -7.348414], 8); // Default view
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -21,7 +20,7 @@ document.getElementById('isochroneForm').addEventListener('submit', function(eve
         };
     });
 
-    const arrivalTime = document.getElementById('arrival_time').value;
+const arrivalTime = document.getElementById('arrival_time').value;
 const travelTime = parseInt(document.getElementById('travel_time').value) * 60; // Convert minutes to seconds
 const travelMode = document.getElementById('travel_mode').value;
 const opacity = parseFloat(document.getElementById('opacity').value);
@@ -30,6 +29,9 @@ const batchSize = 10; // Limit to 10 locations at a time
 let index = 0;
 let attemptedCoordinates = []; // Store attempted coordinates
 let successfulCoordinates = []; // Store successful coordinates
+let pinCount = 0; // Counter for total pins added
+let failedCoordinates = []; // Store failed coordinates
+let pinMarkers = []; // Store pin markers
 
 const processBatch = () => {
     const batch = locations.slice(index, index + batchSize);
@@ -115,6 +117,18 @@ const processBatch = () => {
 
         // Track successful coordinates based on the original input
         successfulCoordinates.push(...batch.map(coords => `${coords.lat}, ${coords.lng}`));
+        pinCount += batch.length; // Increment pin count
+
+        // Add pins if toggle is checked
+        if (document.getElementById('togglePins').checked) {
+            batch.forEach(coords => {
+                const marker = L.marker([coords.lat, coords.lng]).addTo(map);
+                pinMarkers.push(marker); // Store the marker
+            });
+        }
+
+        // Update the pin count display
+        document.getElementById('pinCount').textContent = pinCount;
 
         // Add GeoJSON to the map with specified opacity
         if (geoJsonFeatures.features.length > 0) {
@@ -134,10 +148,23 @@ const processBatch = () => {
     });
 };
 
+// Function to clear all pins and reset the counter
+function clearAllPins() {
+    pinMarkers.forEach(marker => {
+        map.removeLayer(marker); // Remove each marker from the map
+    });
+    pinMarkers = []; // Clear the markers array
+    pinCount = 0; // Reset the pin count
+    document.getElementById('pinCount').textContent = pinCount; // Update the display
+}
+
+// Attach the clear function to the button
+document.getElementById('clearMaps').onclick = clearAllPins; // Use the correct button ID
+
 // Function to check for failed coordinates after all batches are processed
 function checkForFailures() {
     const attemptedCoordsFormatted = attemptedCoordinates.map(coords => `${coords.lat}, ${coords.lng}`);
-    const failedCoordinates = attemptedCoordsFormatted.filter(coords => 
+    failedCoordinates = attemptedCoordsFormatted.filter(coords => 
         !successfulCoordinates.includes(coords) // Check against successful coordinates
     );
 
@@ -156,13 +183,21 @@ function displayFailedCoordinates(failedCoords) {
     const failedList = document.getElementById('failedList');
     failedList.innerHTML = ''; // Clear previous entries
     failedCoords.forEach(coords => {
-        const listItem = document.createElement('li');
+        const listItem = document.createElement('div'); // Use div instead of li for no bullet points
         listItem.textContent = coords; // Display in the format "lat, lng"
         failedList.appendChild(listItem);
     });
     document.getElementById('errorMessage').textContent = "Some coordinates failed to generate coverage.";
     document.getElementById('errorMessage').style.display = "block";
     document.getElementById('failedCoordinates').style.display = "block";
+
+    // Show the paste button
+    const pasteButton = document.getElementById('pasteButton');
+    pasteButton.style.display = "block";
+    pasteButton.onclick = () => {
+        const inputBox = document.getElementById('yourInputBoxId'); // Replace with your actual input box ID
+        inputBox.value = failedCoords.join('\n'); // Paste failed coordinates into the input box
+    };
 }
 
 // Start processing the first batch
@@ -268,4 +303,3 @@ dropArea.addEventListener('drop', (event) => {
         alert('Please drop a valid CSV file.');
     }
 });
-    
