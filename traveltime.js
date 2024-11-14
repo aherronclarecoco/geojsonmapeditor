@@ -1,3 +1,4 @@
+
 const map = L.map('map').setView([53.521288, -7.348414], 8); // Default view
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
