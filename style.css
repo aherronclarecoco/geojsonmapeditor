@@ -86,15 +86,54 @@ button:hover {
 }
 
 .instructions {
-  background:#ABCAFF; /* Instruction background */
+  background: #ABCAFF; /* Instruction background */
   border-left: 6px solid #7AA7F7; /* Left border */
   padding: 12px; /* Padding */
   margin-bottom: 20px; /* Space below */
   border-radius: 4px; /* Rounded corners */
+  width: 100%;
+  margin-left: auto; /* Center horizontally */
+  margin-right: auto; /* Center horizontally */
+  max-width: 1000px; /* Optional: limits the width for better readability */
+}
+
+/* Center the container */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Center the form */
+form#stationForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%; /* Adjust as needed */
+  margin: 0 auto;
+  max-width: 1000px; /* Optional: limits the width for better readability */
+}
+
+/* Center the buttons */
+button {
+  margin: 10px auto; /* Center buttons */
+}
+
+/* Center the table */
+table {
+  margin: 20px auto; /* Center table */
+  width: 100%; /* Full width within the form */
+}
+
+/* Center the collapsible content */
+.collapsible, .content {
+  width: 100%; /* Full width within the form */
+  margin: 10px auto; /* Center collapsible content */
+  max-width: 1000px; /* Optional: limits the width for better readability */
 }
 
 #map {
-  height: 500px; /* Height for map */
+  height: 1250px; /* Height for map */
   width: 100%; /* Full width */
   margin-top: 20px; /* Space above */
 }
