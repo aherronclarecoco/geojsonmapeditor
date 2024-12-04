@@ -4,28 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoJSON Station Editor</title>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="style.css"> <!-- Reference to the external CSS file -->
 
     
 </head>
 <body>
 <header>
-    <h1>GeoJSON Station Editor</h1>
+    <h1>Station Map Editor</h1>
 </header>
+<main>
     <div class="container">
         <nav>
             <div class="left">
-                <a href="index.html">GeoJSON Station Editor</a>
+                <a href="index.html">Station Map Editor</a>
             </div>
             <div class="right">
                 <a href="traveltime.html">Travel Time Calculator</a>
             </div>
         </nav>
+</main>
         <div class="instructions">
             <p><strong>Step 1:</strong> Upload your GeoJSON file. If you don't upload a file, the default file containing all the fire stations in Ireland will be used.</p>
-            <p><strong>Step 2:</strong> Enter the station names (one per line) and the properties you want to update.</p>
-            <p><strong>Step 3:</strong> Click "Check Station Names" to verify the names.</p>
-            <p><strong>Step 4:</strong> If all names are correct, choose to update the GeoJSON or hide unedited pins.</p>
+            <p><strong>Step 2:</strong> Enter the names of the stations(one per line) you want to update. You can also paste them in from a spreadsheet.</p>
+            <p><strong>Step 3:</strong> Click "Check Station Names" to verify the names. If there are any names that are typed incorrectly or include details like 'town', 'city', 'island' etc., they will populate a list at the bottom of the screen alongside some suggested matches. If the suggested matches are the name's of the stations you wanted to add, click 'Update Text Box'. </p>
+            <p><strong>Step 4:</strong> If all names are correct select 'Check Station Names'. You can then then use the buttons that appear to generate map files, which you should drag and drop from your Downloads folder into GeoJSON(linked below).</p>
         </div>
 
         <form id="stationForm">
@@ -265,28 +270,18 @@
             
             <button id="checkButton" type="button">Check Station Names</button>
             <div id="actionButtons" style="display: none;">
-                <button id="updateButton" type="button">Update GeoJSON</button>
-                <button id="hideButton" type="button">Hide Unedited Pins</button>
-                <button id="exportCSVButton" type="button">Export to CSV for Smappen</button>
+                <button id="updateButton" type="button">Generate Map With Selected Stations Highlighted</button>
+                <button id="hideButton" type="button">Generate Map With Selected Stations Only</button>
+                <button id="exportCSVButton" type="button">Export Station Coordinates to CSV for Travel Time Calculator</button>
             </div>
         </form>
         <div class="instructions">
-            <details>
-                <summary>Using geojson.io</summary>
-                <p>geojson.io is a tool for creating, editing, and visualizing GeoJSON files. Follow these steps:</p>
-                <ol>
-                    <li>Go to <a href="https://geojson.io" target="_blank">geojson.io</a>.</li>
-                    <li>Upload the GeoJSON file you generated.</li>
-                </ol>
-            </details>
-            <details>
-                <summary>Using smappen</summary>
-                <p>smappen is a tool for creating custom maps and exporting them as GeoJSON files. Follow these steps:</p>
-                <ol>
-                    <li>Go to <a href="https://smappen.com/app" target="_blank">smappen.com/app</a>.</li>
-                    <li>Upload the CSV you generated, select co-ordinates and you can calculate the travel times from there.</li>
-                </ol>
-            </details>
+                <summary><b>Using GeoJSON.io</b></summary>
+                <p><b>GeoJSON.io is a tool you can use to view the maps you've generated. To do so, follow these steps:</b></p>
+                <ul>
+                    <li><h3><a href="https://geojson.io" target="_blank">➡️Go to GeoJSON.io by clicking here⬅️</a>.</h3></li>
+                    <li>Upload the GeoJSON file you generated. It should be in your downloads folder.</li>
+                </ul>
         </div>
         <div id="suggestions" style="display:none;">
             <p>If the suggested matches are all correct, click this button to update them in the text box:</p>
@@ -311,7 +306,5 @@
             </ul>
         </div>
     </div>
-    
-    <script src="script.js"></script>
 </body>
 </html>
