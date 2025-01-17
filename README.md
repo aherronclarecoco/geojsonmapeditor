@@ -1,6 +1,13 @@
 # GIS Map Editor
 # 🚨If this application ever stops working, update the API Key and App ID in config.js🚨
- You can get both of these at https://account.traveltime.com/dashboard
+   You can get both of these at https://account.traveltime.com/dashboard
+
+# Updating The Map File: 
+ If Stations close or reopen, on the webpage, you can input the names of all the stations you want in the updated map file(all active stations), 
+ set the size to medium and generate a map as you would do normally. You can check if the map is as you expect in GeoJson.io, 
+ & if it is, rename it to “irish_fire_stations.geojson” & delete the file on GitHub with the same name(so that the software stops reading the old 
+ file), then drag and drop the new file into GitHub. The map should now be updated successfully. If it doesn’t work, check that you have named the 
+ file the exact way I’ve mentioned.
 
  # Current Link:
  https://aherronclarecoco.github.io/geojsonmapeditor/
