@@ -196,6 +196,10 @@ function displayUnmatchedNames(unmatchedNames) {
 }
 
 function findNearestMatch(name) {
+    if (!name.trim()) {
+        return ''; // Ignore empty lines
+    }
+
     let nearest = '';
     let minDistance = Infinity;
 
@@ -252,23 +256,24 @@ function updateTextBox() {
     const table = document.getElementById('errorTable');
     const rows = table.getElementsByTagName('tr');
     const currentText = document.getElementById('stationNames').value.split('\n').map(name => name.trim().toUpperCase());
-    const stationNames = [...currentText];
+    let stationNames = new Set(currentText);
 
     for (let i = 1; i < rows.length; i++) {
         const cells = rows[i].getElementsByTagName('td');
         if (cells.length > 1) {
-            const problemName = cells[0].textContent;
-            const suggestedName = cells[1].textContent;
-            const problemIndex = stationNames.indexOf(problemName);
-            if (problemIndex !== -1) {
-                stationNames.splice(problemIndex, 1, suggestedName); // Replace problem name with suggested name
-            } else if (!stationNames.includes(suggestedName)) {
-                stationNames.push(suggestedName); // Add suggested name if problem name not found
+            const problemName = cells[0].textContent.trim().toUpperCase();
+            const suggestedName = cells[1].textContent.trim().toUpperCase();
+            if (stationNames.has(problemName)) {
+                stationNames.delete(problemName); // Remove the problem name
+                stationNames.add(suggestedName); // Add the suggested name
             }
         }
     }
 
-    document.getElementById('stationNames').value = stationNames.join('\n');
+    // Convert Set back to array and filter out empty strings
+    const uniqueStationNames = Array.from(stationNames).filter(name => name !== '');
+
+    document.getElementById('stationNames').value = uniqueStationNames.join('\n');
     document.getElementById('suggestions').style.display = 'none';
     table.style.display = 'none';
 }
