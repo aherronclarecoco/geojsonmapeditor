@@ -42,6 +42,6 @@ Upload a GeoJSON file, enter station names, and click “Check Station Names” 
 Input coordinates and travel parameters to visualize isochrones. You can use the "Export to CSV" in GeoJSON Station Editor to generate a file with the coordinates for all stations you name & drop this file into the the csv file upload box to automatically input all the coordinates. Use the buttons & adjustable selectors on the page to create your coverage map once you have input the coordinates.
 ## Dependencies
 Leaflet.js for mapping.
-TravelTime API for travel data.
+TravelTime API for travel data. (https://traveltime.com/)
 ## License
 This project is licensed under the MIT License.
